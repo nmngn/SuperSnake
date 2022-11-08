@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
@@ -16,7 +14,6 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
