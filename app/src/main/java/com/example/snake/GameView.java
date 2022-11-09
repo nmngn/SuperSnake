@@ -21,12 +21,15 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GameView extends View {
-    private Bitmap bmGrass1, bmGrass2, bmSnake1, bmApple;
+    private Bitmap bmGrass1, bmGrass2, bmSnake1, bmApple, bmBom, bmGoldApple, bmSpeed;
     private ArrayList<Grass> arrGrass = new ArrayList<>();
     private int w = 12, h=21;
     public static int sizeElementMap = 75*Constants.SCREEN_WIDTH/1080;
     private Snake snake;
     private Apple apple;
+    private Bom bom;
+    private GoldApple goldApple;
+    private  Speed speed;
     private Handler handler;
     private Runnable r;
     private boolean move = false;
@@ -54,6 +57,9 @@ public class GameView extends View {
         bmSnake1 = Bitmap.createScaledBitmap(bmSnake1, 14*sizeElementMap, sizeElementMap, true);
         bmApple = BitmapFactory.decodeResource(this.getResources(), R.drawable.apple);
         bmApple = Bitmap.createScaledBitmap(bmApple, sizeElementMap, sizeElementMap, true);
+        bmBom = BitmapFactory.decodeResource(this.getResources(), R.drawable.bom);
+        bmBom = Bitmap.createScaledBitmap(bmBom, sizeElementMap, sizeElementMap, true);
+
         for(int i = 0; i < h; i++){
             for (int j = 0; j < w; j++){
                 if((j+i)%2==0){
@@ -65,6 +71,7 @@ public class GameView extends View {
         }
         snake = new Snake(bmSnake1,arrGrass.get(126).getX(),arrGrass.get(126).getY(), 4);
         apple = new Apple(bmApple, arrGrass.get(randomApple()[0]).getX(), arrGrass.get(randomApple()[1]).getY());
+        bom = new Bom(bmBom, arrGrass.get(randomBom()[0]).getX(), arrGrass.get(randomBom()[1]).getY());
         handler = new Handler();
         r = new Runnable() {
             @Override
@@ -94,6 +101,27 @@ public class GameView extends View {
     }
 
     private int[] randomApple(){
+        int []xy = new int[2];
+        Random r = new Random();
+        xy[0] = r.nextInt(arrGrass.size()-1);
+        xy[1] = r.nextInt(arrGrass.size()-1);
+        Rect rect = new Rect(arrGrass.get(xy[0]).getX(), arrGrass.get(xy[1]).getY(), arrGrass.get(xy[0]).getX()+sizeElementMap, arrGrass.get(xy[1]).getY()+sizeElementMap);
+        boolean check = true;
+        while (check){
+            check = false;
+            for (int i = 0; i < snake.getArrPartSnake().size(); i++){
+                if(rect.intersect(snake.getArrPartSnake().get(i).getrBody())){
+                    check = true;
+                    xy[0] = r.nextInt(arrGrass.size()-1);
+                    xy[1] = r.nextInt(arrGrass.size()-1);
+                    rect = new Rect(arrGrass.get(xy[0]).getX(), arrGrass.get(xy[1]).getY(), arrGrass.get(xy[0]).getX()+sizeElementMap, arrGrass.get(xy[1]).getY()+sizeElementMap);
+                }
+            }
+        }
+        return xy;
+    }
+
+    private int[] randomBom() {
         int []xy = new int[2];
         Random r = new Random();
         xy[0] = r.nextInt(arrGrass.size()-1);
@@ -184,6 +212,7 @@ public class GameView extends View {
         }
         snake.drawSnake(canvas);
         apple.draw(canvas);
+        bom.draw(canvas);
         if(snake.getArrPartSnake().get(0).getrBody().intersect(apple.getR())){
             if(loadedsound){
                 int streamId = this.soundPool.play(this.soundEat, (float)0.5, (float)0.5, 1, 0, 1f);
@@ -201,6 +230,11 @@ public class GameView extends View {
                 MainActivity.txt_best_score.setText(bestScore+"");
             }
         }
+
+        if (snake.getArrPartSnake().get(0).getrBody().intersect(bom.getR())) {
+            gameOver();
+        }
+
         handler.postDelayed(r, 100);
     }
 
