@@ -60,6 +60,10 @@ public class GameView extends View {
         bmApple = Bitmap.createScaledBitmap(bmApple, sizeElementMap, sizeElementMap, true);
         bmBom = BitmapFactory.decodeResource(this.getResources(), R.drawable.bom);
         bmBom = Bitmap.createScaledBitmap(bmBom, sizeElementMap, sizeElementMap, true);
+        bmGoldApple = BitmapFactory.decodeResource(this.getResources(), R.drawable.gold_apple);
+        bmGoldApple = Bitmap.createScaledBitmap(bmGoldApple, sizeElementMap, sizeElementMap, true);
+        bmSpeed = BitmapFactory.decodeResource(this.getResources(), R.drawable.flash);
+        bmSpeed = Bitmap.createScaledBitmap(bmSpeed, sizeElementMap, sizeElementMap, true);
 
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
@@ -73,6 +77,8 @@ public class GameView extends View {
         snake = new Snake(bmSnake1, arrGrass.get(126).getX(), arrGrass.get(126).getY(), 4);
         apple = new Apple(bmApple, arrGrass.get(randomApple()[0]).getX(), arrGrass.get(randomApple()[1]).getY());
         bom = new Bom(bmBom, arrGrass.get(randomBom()[0]).getX(), arrGrass.get(randomBom()[1]).getY());
+        goldApple = new GoldApple(bmGoldApple, arrGrass.get(randomGoldApple()[0]).getX(), arrGrass.get(randomGoldApple()[1]).getY());
+        speed = new Speed(bmSpeed, arrGrass.get(randomSpeed()[0]).getX(), arrGrass.get(randomSpeed()[1]).getY());
         handler = new Handler();
         r = new Runnable() {
             @Override
@@ -129,6 +135,22 @@ public class GameView extends View {
             xy[0] = r.nextInt(arrGrass.size() - 1);
             xy[1] = r.nextInt(arrGrass.size() - 1);
         }
+        return xy;
+    }
+
+    private int[] randomGoldApple() {
+        int[] xy = new int[2];
+        Random r = new Random();
+        xy[0] = r.nextInt(arrGrass.size() - 1);
+        xy[1] = r.nextInt(arrGrass.size() - 1);
+        return xy;
+    }
+
+    private int[] randomSpeed() {
+        int[] xy = new int[2];
+        Random r = new Random();
+        xy[0] = r.nextInt(arrGrass.size() - 1);
+        xy[1] = r.nextInt(arrGrass.size() - 1);
         return xy;
     }
 
@@ -203,14 +225,17 @@ public class GameView extends View {
         snake.drawSnake(canvas);
         apple.draw(canvas);
         bom.draw(canvas);
+        goldApple.draw(canvas);
+        speed.draw(canvas);
         new CountDownTimer(5000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
 
             }
+
             @Override
             public void onFinish() {
-                bom.reset(10000,10000);
+                bom.reset(10000, 10000);
             }
         }.start();
         if (snake.getArrPartSnake().get(0).getrBody().intersect(apple.getR())) {
